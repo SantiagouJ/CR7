@@ -61,7 +61,7 @@ export default function Timeline() {
       if (!track) return;
 
       const scrollDist = track.scrollWidth - window.innerWidth;
-      const fadeDist = window.innerHeight * 1.5;
+      const fadeDist = window.innerHeight * 0.7;
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -69,7 +69,7 @@ export default function Timeline() {
           start: 'top top',
           end: () => `+=${scrollDist + fadeDist}`,
           pin: true,
-          scrub: 1,
+          scrub: 0.6,
           invalidateOnRefresh: true,
           anticipatePin: 1,
         },
@@ -85,25 +85,25 @@ export default function Timeline() {
       // Phase 2: cinematic blur / fade on last panel's image
       tl.to(
         lastImageRef.current,
-        { filter: 'blur(24px)', opacity: 0, scale: 1.12, ease: 'none', duration: fadeDist },
+        { filter: 'blur(16px)', opacity: 0, scale: 1.08, ease: 'power1.in', duration: fadeDist },
         '>',
       );
 
       tl.to(
         lastOverlayRef.current,
-        { opacity: 0.7, ease: 'none', duration: fadeDist * 0.85 },
+        { opacity: 0.85, ease: 'power1.in', duration: fadeDist },
         '<',
       );
 
       tl.to(
         lastGradientRef.current,
-        { opacity: 1, ease: 'none', duration: fadeDist * 0.95 },
+        { opacity: 1, ease: 'power1.in', duration: fadeDist },
         '<',
       );
 
       tl.to(
         lastContentRef.current,
-        { opacity: 0, y: -30, ease: 'none', duration: fadeDist * 0.4 },
+        { opacity: 0, y: -20, ease: 'none', duration: fadeDist * 0.6 },
         '<',
       );
     }, containerRef);
