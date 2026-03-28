@@ -53,7 +53,7 @@ export default function Hero() {
           <h1 className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-none">
             CRISTIANO
             <br />
-            <span className="text-gold-400">RONALDO</span>
+            <span className="text-gold-400 italic">RONALDO</span>
           </h1>
         </motion.div>
 
