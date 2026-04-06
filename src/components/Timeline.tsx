@@ -50,10 +50,6 @@ const career = [
 export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const lastImageRef = useRef<HTMLImageElement>(null);
-  const lastOverlayRef = useRef<HTMLDivElement>(null);
-  const lastGradientRef = useRef<HTMLDivElement>(null);
-  const lastContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -61,51 +57,21 @@ export default function Timeline() {
       if (!track) return;
 
       const scrollDist = track.scrollWidth - window.innerWidth;
-      const fadeDist = window.innerHeight * 0.7;
+      const pinnedScroll = Math.min(scrollDist, window.innerHeight * 3.5);
 
-      const tl = gsap.timeline({
+      gsap.to(track, {
+        x: () => -(track.scrollWidth - window.innerWidth),
+        ease: 'none',
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: () => `+=${scrollDist + fadeDist}`,
+          end: () => `+=${pinnedScroll}`,
           pin: true,
           scrub: 0.6,
           invalidateOnRefresh: true,
           anticipatePin: 1,
         },
       });
-
-      // Phase 1: horizontal scroll through career panels
-      tl.to(track, {
-        x: () => -scrollDist,
-        ease: 'none',
-        duration: scrollDist,
-      });
-
-      // Phase 2: cinematic blur / fade on last panel's image
-      tl.to(
-        lastImageRef.current,
-        { filter: 'blur(16px)', opacity: 0, scale: 1.08, ease: 'power1.in', duration: fadeDist },
-        '>',
-      );
-
-      tl.to(
-        lastOverlayRef.current,
-        { opacity: 0.85, ease: 'power1.in', duration: fadeDist },
-        '<',
-      );
-
-      tl.to(
-        lastGradientRef.current,
-        { opacity: 1, ease: 'power1.in', duration: fadeDist },
-        '<',
-      );
-
-      tl.to(
-        lastContentRef.current,
-        { opacity: 0, y: -20, ease: 'none', duration: fadeDist * 0.6 },
-        '<',
-      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -114,7 +80,7 @@ export default function Timeline() {
   return (
     <div ref={containerRef} className="relative overflow-hidden bg-zinc-950">
       <div ref={trackRef} className="flex h-screen will-change-transform">
-        <div className="shrink-0 w-screen h-full flex items-center justify-center px-4">
+        <div className="shrink-0 w-[60vw] sm:w-[70vw] md:w-screen h-full flex items-center justify-center px-4">
           <div className="text-center">
             <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold">
               The <span className="text-gold-400">Journey</span>
@@ -138,96 +104,38 @@ export default function Timeline() {
           </div>
         </div>
 
-        {career.map((item, i) => {
-          const isLast = i === career.length - 1;
+        {career.map((item, i) => (
+          <div key={i} className="shrink-0 w-screen h-full relative">
+            <img
+              src={item.image}
+              alt={item.club}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
 
-          return (
-            <div key={i} className="shrink-0 w-screen h-full relative">
-              <img
-                ref={isLast ? lastImageRef : undefined}
-                src={item.image}
-                alt={item.club}
-                className="absolute inset-0 w-full h-full object-cover"
-                style={
-                  isLast
-                    ? { filter: 'blur(0px)', transformOrigin: 'center center', willChange: 'filter, transform, opacity' }
-                    : undefined
-                }
-              />
+            <div className="absolute inset-0 bg-black/50" />
 
-              <div className="absolute inset-0 bg-black/50" />
-
-              {isLast && (
-                <>
-                  <div
-                    ref={lastOverlayRef}
-                    className="absolute inset-0 bg-black"
-                    style={{ opacity: 0 }}
-                  />
-                  <div
-                    ref={lastGradientRef}
-                    className="absolute inset-0"
-                    style={{
-                      opacity: 0,
-                      background:
-                        'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.85) 60%, #000 100%)',
-                    }}
-                  />
-                </>
-              )}
-
-              <div
-                ref={isLast ? lastContentRef : undefined}
-                className={isLast ? 'absolute inset-0 z-10' : 'relative z-10 h-full flex flex-col items-center justify-end pb-20 md:pb-28 px-4'}
-              >
-                {isLast ? (
-                  <>
-                    <div className="relative h-full flex flex-col items-center justify-end pb-20 md:pb-28 px-4">
-                      <div className="backdrop-blur-xl bg-black/30 border border-white/10 rounded-2xl px-6 md:px-10 py-5 md:py-8 text-center max-w-md">
-                        <img
-                          src={item.logo}
-                          alt={`${item.club} logo`}
-                          className="w-14 h-14 md:w-18 md:h-18 object-contain mx-auto mb-4 drop-shadow-lg"
-                          style={{ filter: `drop-shadow(0 0 12px ${item.color}60)` }}
-                        />
-                        <h3 className="font-display text-2xl md:text-4xl lg:text-5xl font-bold text-white">
-                          {item.club}
-                        </h3>
-                        <p className="mt-3 text-white/50 tracking-[0.2em] text-xs md:text-sm">
-                          {item.years}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="absolute top-8 right-8 text-white/0.06 font-display text-8xl md:text-[10rem] font-bold leading-none pointer-events-none select-none opacity-20">
-                      {String(i + 1).padStart(2, '0')}
-                    </div>
-                  </>
-                ) : (
-                  <div className="backdrop-blur-xl bg-black/30 border border-white/10 rounded-2xl px-6 md:px-10 py-5 md:py-8 text-center max-w-md">
-                    <img
-                      src={item.logo}
-                      alt={`${item.club} logo`}
-                      className="w-14 h-14 md:w-18 md:h-18 object-contain mx-auto mb-4 drop-shadow-lg"
-                      style={{ filter: `drop-shadow(0 0 12px ${item.color}60)` }}
-                    />
-                    <h3 className="font-display text-2xl md:text-4xl lg:text-5xl font-bold text-white">
-                      {item.club}
-                    </h3>
-                    <p className="mt-3 text-white/50 tracking-[0.2em] text-xs md:text-sm">
-                      {item.years}
-                    </p>
-                  </div>
-                )}
+            <div className="relative z-10 h-full flex flex-col items-center justify-end pb-20 md:pb-28 px-4">
+              <div className="backdrop-blur-xl bg-black/30 border border-white/10 rounded-2xl px-6 md:px-10 py-5 md:py-8 text-center max-w-md">
+                <img
+                  src={item.logo}
+                  alt={`${item.club} logo`}
+                  className="w-14 h-14 md:w-18 md:h-18 object-contain mx-auto mb-4 drop-shadow-lg"
+                  style={{ filter: `drop-shadow(0 0 12px ${item.color}60)` }}
+                />
+                <h3 className="font-display text-2xl md:text-4xl lg:text-5xl font-bold text-white">
+                  {item.club}
+                </h3>
+                <p className="mt-3 text-white/50 tracking-[0.2em] text-xs md:text-sm">
+                  {item.years}
+                </p>
               </div>
-
-              {!isLast && (
-                <div className="absolute top-8 right-8 text-white/0.06 font-display text-8xl md:text-[10rem] font-bold leading-none pointer-events-none select-none opacity-20">
-                  {String(i + 1).padStart(2, '0')}
-                </div>
-              )}
             </div>
-          );
-        })}
+
+            <div className="absolute top-8 right-8 text-white/0.06 font-display text-8xl md:text-[10rem] font-bold leading-none pointer-events-none select-none opacity-20">
+              {String(i + 1).padStart(2, '0')}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
