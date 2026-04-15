@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const MD_BREAKPOINT = 768;
 
 const career = [
   {
@@ -50,8 +52,19 @@ const career = [
 export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < MD_BREAKPOINT : false
+  );
 
   useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < MD_BREAKPOINT);
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+
     const ctx = gsap.context(() => {
       const track = trackRef.current;
       if (!track) return;
@@ -75,18 +88,32 @@ export default function Timeline() {
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile]);
 
   return (
-    <div ref={containerRef} className="relative overflow-hidden bg-zinc-950">
-      <div ref={trackRef} className="flex h-screen will-change-transform">
-        <div className="shrink-0 w-[60vw] sm:w-[70vw] md:w-screen h-full flex items-center justify-center px-4">
+    <div
+      ref={containerRef}
+      className={`relative bg-zinc-950 ${
+        isMobile ? 'overflow-x-auto snap-x snap-mandatory' : 'overflow-hidden'
+      }`}
+    >
+      <div
+        ref={trackRef}
+        className={`flex will-change-transform ${
+          isMobile ? 'h-screen' : 'h-screen'
+        }`}
+      >
+        <div
+          className={`shrink-0 h-full flex items-center justify-center px-4 ${
+            isMobile ? 'w-screen snap-start' : 'w-[60vw] sm:w-[70vw] md:w-screen'
+          }`}
+        >
           <div className="text-center">
             <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold">
               The <span className="text-gold-400">Journey</span>
             </h2>
             <p className="mt-6 text-white/40 tracking-[0.3em] uppercase text-xs md:text-sm">
-              Scroll to explore his legacy
+              {isMobile ? 'Swipe to explore his legacy' : 'Scroll to explore his legacy'}
             </p>
             <div className="mt-8 flex items-center gap-2 justify-center text-white/20">
               <div className="w-12 h-px bg-white/20" />
@@ -105,7 +132,12 @@ export default function Timeline() {
         </div>
 
         {career.map((item, i) => (
-          <div key={i} className="shrink-0 w-screen h-full relative">
+          <div
+            key={i}
+            className={`shrink-0 h-full relative ${
+              isMobile ? 'w-screen snap-start' : 'w-screen'
+            }`}
+          >
             <img
               src={item.image}
               alt={item.club}
