@@ -51,3 +51,16 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(212, 175, 55, 0.5);
 }
+
+.snap-x::-webkit-scrollbar {
+  display: none;
+}
+
+.snap-x {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.snap-start {
+  scroll-snap-stop: always;
+}

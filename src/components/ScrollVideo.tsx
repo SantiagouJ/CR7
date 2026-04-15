@@ -81,7 +81,7 @@ export default function ScrollVideo() {
     const imgs: HTMLImageElement[] = [];
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
       const img = new Image();
-      img.src = `${FRAME_PATH}${padFrame(i)}.png`;
+      img.src = `${FRAME_PATH}${padFrame(i)}.webp`;
       img.onload = () => {
         loadedCount.current++;
         if (loadedCount.current >= TOTAL_FRAMES) {
