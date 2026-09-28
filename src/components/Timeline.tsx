@@ -21,7 +21,7 @@ const career = [
     image:
       'https://s.france24.com/media/display/c254fa04-074f-11ec-b901-005056bfb2b6/w:1280/p:16x9/AP090415022483.jpg',
     color: '#DA020E',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/200px-Manchester_United_FC_crest.svg.png',
+    logo: 'https://thumb.wikimedia.org/wikipedia/sco/thumb/7/7a/Manchester_United_FC_crest.svg/3840px-Manchester_United_FC_crest.svg.png',
   },
   {
     club: 'Real Madrid',
@@ -29,7 +29,7 @@ const career = [
     image:
       'https://images.daznservices.com/di/library/DAZN_News/91/8c/cristiano-ronaldo-champions-league_17ak1udoiuj631316hlbv1bi1i.png?t=37193869',
     color: '#FEBE10',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/200px-Real_Madrid_CF.svg.png',
+    logo: 'https://thumb.wikimedia.org/wikipedia/sco/thumb/5/56/Real_Madrid_CF.svg/1920px-Real_Madrid_CF.svg.png',
   },
   {
     club: 'Juventus',
